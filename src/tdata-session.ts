@@ -30,6 +30,12 @@ interface TdSessionParams {
     ignoreVersion?: boolean
 
     /**
+     * Override current version.
+     * Much higher possibility of errors
+     */
+    overrideVersion?: number
+
+    /**
      * Value of -key cli parameter.
      * Defaults to `data`
      */
@@ -386,7 +392,10 @@ export class TdataSession {
     ): Promise<void> {
         filename += 's'
 
-        const version = intToBytesArray(TDF_VERSION, this.params.le ?? true)
+        const version = intToBytesArray(
+            this.params.overrideVersion ?? TDF_VERSION,
+            this.params.le ?? true
+        )
         const dataSize = intToBytesArray(data.length, this.params.le ?? true)
         const md5 = this.crypto.createMd5()
         await md5.update(data)
