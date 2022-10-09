@@ -12,9 +12,13 @@ export interface TdMtpAuthorization {
     authKeysToDestroy: TdAuthKey[]
 }
 
-export interface TdKeyData {
-    localKey: Buffer
+export interface InputTdKeyData {
+    localKey?: Buffer
     count: number
     order: number[]
     active: number
+}
+
+export interface TdKeyData extends InputTdKeyData {
+    localKey: Buffer
 }

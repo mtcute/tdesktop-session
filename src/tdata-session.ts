@@ -11,7 +11,12 @@ import { QtReader } from './qt-reader'
 import { ITdCryptoProvider, TdCryptoProviderFactory } from './crypto'
 import { LocalStorageField, lsBlockReaders } from './types/ls-keys'
 import Long from 'long'
-import { TdAuthKey, TdKeyData, TdMtpAuthorization } from './types/misc'
+import {
+    InputTdKeyData,
+    TdAuthKey,
+    TdKeyData,
+    TdMtpAuthorization,
+} from './types/misc'
 import { QtWriter } from './qt-writer'
 
 const TDF_MAGIC = Buffer.from('TDF$')
@@ -128,14 +133,14 @@ export class TdataSession {
         }
     }
 
-    async writeKeyData(keyData: Omit<TdKeyData, 'localKey'>): Promise<Buffer> {
+    async writeKeyData(keyData: InputTdKeyData): Promise<Buffer> {
         const info = new QtWriter()
         info.int32(keyData.count)
         keyData.order.forEach((i) => info.int32(i))
         info.int32(keyData.active)
         const infoDecrypted = info.result()
 
-        const keyInnerData = randomBytes(256)
+        const keyInnerData = keyData.localKey ?? randomBytes(256)
         const infoEncrypted = await this.encryptLocal(
             infoDecrypted,
             keyInnerData
